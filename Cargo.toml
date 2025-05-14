@@ -24,6 +24,14 @@ log = "0.4.27"
 
 # You only need serde if you want app persistence:
 serde = { version = "1.0.219", features = ["derive"] }
+strum = "0.27.1"
+strum_macros = "0.27.1"
+rspotify = "0.14.0"
+rig-core = "0.12.0"
+async-trait = "0.1.88"
+schemars = "0.8.22"
+tokio = "1.45.0"
+rand = "0.9.1"
 
 # native:
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
