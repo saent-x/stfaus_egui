@@ -1,4 +1,5 @@
-#![allow(unused)] // thid is a temporary measure to prevent distractions from unused var...
+#![allow(unused)] 
+use std::env;
 use crate::models::{AppError, LLMResult, SearchAgent, Song};
 use async_trait::async_trait;
 use rspotify::{
@@ -13,10 +14,10 @@ pub struct SpotifyAgent {
 
 impl SpotifyAgent {
     pub async fn init() -> Result<Self, AppError> {
-        let client_id = env!("RSPOTIFY_CLIENT_ID");
-        let client_secret = env!("RSPOTIFY_CLIENT_SECRET");
+        let client_id = env::var("RSPOTIFY_CLIENT_ID").unwrap();
+        let client_secret = env::var("RSPOTIFY_CLIENT_SECRET").unwrap();
 
-        let creds = Credentials::new(client_id, client_secret);
+        let creds = Credentials::new(client_id.as_str(), client_secret.as_str());
         let client = ClientCredsSpotify::new(creds);
         client
             .request_token()
