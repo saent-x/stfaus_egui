@@ -1,11 +1,10 @@
 use async_trait::async_trait;
 use strum_macros::EnumIter;
-use core::fmt;
+use core::fmt::{self, Formatter};
 use std::str::FromStr;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::libs::db::Track;
 
 #[async_trait]
 pub trait SearchAgent: Send + Sync {
@@ -43,21 +42,7 @@ pub struct Song {
     pub preview_url: String,
 }
 
-impl Song {
-    pub fn into_track(&self, app_data_id: &str) -> Track {
-        Track { 
-            uuid: self.uuid.clone(), 
-            app_data_id: app_data_id.to_string(),
-            title: self.title.clone(), 
-            artist: self.artist.clone(), 
-            album: self.album.clone(), 
-            cover_art: self.cover_art.clone(),
-            preview_url: self.preview_url.clone(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, EnumIter, PartialEq)]
+#[derive(Debug, Clone, EnumIter, PartialEq, Serialize, Deserialize)]
 pub enum MusicEra {
     Any,
     Modern,
@@ -70,7 +55,7 @@ pub enum MusicEra {
 }
 
 impl fmt::Display for MusicEra {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(
             f,
             "{}",
@@ -106,7 +91,7 @@ impl FromStr for MusicEra {
     }
 }
 
-#[derive(Clone, EnumIter, Debug, PartialEq)]
+#[derive(Clone, EnumIter, Debug, PartialEq, Serialize, Deserialize)]
 pub enum MusicGenre {
     Any,
     Afro,
@@ -117,7 +102,7 @@ pub enum MusicGenre {
 }
 
 impl fmt::Display for MusicGenre {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(
             f,
             "{}",
