@@ -6,9 +6,7 @@ use crate::{
     utils::{generate_rand_id, remove_duplicates},
 };
 use rig::{
-    agent::Agent,
-    completion::Prompt,
-    providers::gemini::{self, completion::CompletionModel},
+    agent::Agent, completion::Prompt, one_or_many, providers::gemini::{self, completion::CompletionModel}
 };
 
 struct PromptCall {
@@ -48,7 +46,8 @@ impl<'a> AppEngine<'a> {
 
     fn new_prompt_call(&mut self, id: &str, track_count: u16) {
         self.prompt_call.entry(id.to_string())
-            .and_modify(|v| v.push(PromptCall { count: self.prompt_counter, track_count })).or_insert(vec![PromptCall { count: self.prompt_counter, track_count }]);
+            .and_modify(|v| v.push(PromptCall { count: self.prompt_counter, track_count }))
+            .or_insert(vec![PromptCall { count: self.prompt_counter, track_count }]);
     }
 
     pub async fn ask(&mut self, expression: &str, music_genre: MusicGenre, music_era: MusicEra) -> Result<Vec<Song>, AppError> {
@@ -89,9 +88,9 @@ impl<'a> AppEngine<'a> {
         );
         
         let req = rig::completion::CompletionRequest {
-            preamble: Some("You are now a humorous AI assistant.".to_owned()),
-            chat_history: vec![],  // we want fresh prompts
-            prompt: rig::message::Message::User {
+            preamble: Some("You are now a humorous AI assistant.".to_string()),
+            chat_history: one_or_many::OneOrMany::one(
+                rig::message::Message::User {
                 content: rig::one_or_many::OneOrMany::one(rig::message::UserContent::text(
                     format!(
                         "generate {} data in json array having [artist, title, album, year, genre] for 
@@ -103,7 +102,8 @@ impl<'a> AppEngine<'a> {
                         prompt_config.prompt
                     )
                 )),
-            },
+            }
+            ),  // we want fresh prompts
             temperature: Some(0.7),
             additional_params: None,
             tools: vec![],
