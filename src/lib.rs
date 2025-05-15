@@ -4,4 +4,4 @@ mod app;
 mod hub;
 mod models;
 mod utils;
-//pub use app::App;
+pub use app::App;
